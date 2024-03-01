@@ -18,3 +18,4 @@
 Kmer::Kmer(int k){
     //Implementar......
 }
+
