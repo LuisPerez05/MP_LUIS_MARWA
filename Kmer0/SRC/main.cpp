@@ -5,7 +5,7 @@
 
 /* 
  * File:   main.cpp
- * @author Silvia Acid Carrillo <acid@decsai.ugr.es>
+ * @author Luis Pérez Velasco <luispv05@correo.ugr.es>
  * @author Andrés Cano Utrera <acu@decsai.ugr.es>
  * @author Luis Castillo Vidal <L.Castillo@decsai.ugr.es>
  * @author Javier Martínez Baena <jbaena@ugr.es>
@@ -62,8 +62,39 @@ int main(int argc, char* argv[]) {
     Kmer complementaryKmers[DIM_ARRAY_KMERS];
     
     // Read K (integer) and a string with the input nucleotides list
-
+    //Lo que hace es pedir k y secuencia genetica
+    int k;
+    string secuencia;
+    
+    cout <<"Ingrese k (entero): ";
+    cin >> k;
+    
+    cout <<"Introduzca los nucleóticos de entrada: ";
+    cin >> secuencia;
+   
     // Obtain the kmers: find the kmers in the input string and put them in an array of Kmers
+    
+    int numkmers = 0;
+    
+    for(int i=0; secuencia[i + k -1] != '\0'; i++){
+        
+        int nuevoKmer;
+        
+        bool kmerValido = true;
+            for(int j=0; j<k; j++){
+                char nucleotido = secuencia[i + j];
+                if(nucleotido !='A'&& nucleotido != 'C' && nucleotido != 'G' && nucleotido != 'T'){
+                    nuevoKmer = 'N';
+                    kmerValido = false;
+                }else{
+                    nuevoKmer = nucleotido;
+                }
+        }
+        if (kmerValido){
+            kmers[numkmers] = nuevoKmer;
+            numkmers++;
+        }
+    }
     
     // Normalize each Kmer in the array
 
