@@ -93,9 +93,25 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < num_fragmentos  ; i++) {
        }
      
-    kmers[i] = Kmer (secuencia_genetica.substr(i,k));
-    
-    kmers[i].normalize(VALID_NUCLEOTIDES);
+    // Obtener el Kmer desde la secuencia genética
+    string secuencia_kmer = "";
+    for (int j = 0; j < k; j++) {
+            if (i + j < secuencia_genetica.length()) {
+                char nucleotido = secuencia_genetica[i + j];
+                if (esNucleotidoValido(nucleotido)) {
+                    secuencia_kmer += nucleotido;
+                } else {
+                // Tratar con nucleótidos no válidos (si es necesario)
+                }
+            } else {
+            // Tratar con el final de la secuencia genética (si es necesario)
+        }
+    }
+
+    // Almacenar el Kmer en el arreglo kmers
+    Kmer kmer(secuencia_kmer);
+    kmers[i] = kmer;
+
     
     complementaryKmers[i] = kmers[i].complementary(VALID_NUCLEOTIDES,
         COMPLEMENTARY_NUCLEOTIDES);
