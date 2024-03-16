@@ -54,6 +54,7 @@ int main(int argc, char* argv[]) {
     // This is the array where the kmers of the input genetic sequence will be
     // saved
     Kmer kmers[DIM_ARRAY_KMERS];
+    int kmers_used=0;
     
     // This is the array where the complementary kmers will be
     // saved
@@ -61,65 +62,41 @@ int main(int argc, char* argv[]) {
     
     // Read K (integer) and a string with the input nucleotides list
     
+    int k;
+    string nucleotides;
+    
+    cin>>k;
+    cin>>nucleotides;
+    
     // Obtain the kmers: find the kmers in the input string and put them in an array of Kmer
+    
+    int lenght = nucleotides.size();
+    int pos=k;
+    while((pos>(lenght+1)) && (kmers_used<DIM_ARRAY_ACKMERS)){
+        kmers[pos-k]=nucleotides.substr(pos-k,k);
+        kmers_used++;
+        pos++;
+    }
     
     // Normalize each Kmer in the array
     
+    for(int i = 0; i < kmers_used; i++){
+        kmers[i].normalize(VALID_NUCLEOTIDES);
+    
     // Obtain the complementary kmers and turn them into lowercase
-
+        
+        complementaryKmers[i] = kmers[i].complementary(VALID_NUCLEOTIDES ,COMPLEMENTARY_NUCLEOTIDES);
+        ToLower(complementaryKmers[i]);
+    }
+     
     // Show the list of kmers and complementary kmers as in the example
     
-    int k, secuencia_genetica;
+    cout << kmers_used << endl;
     
-    cout <<"Introduzca k: ";
-    cin >> k;
-    cout <<"Introduzca la secuencia: ";
-    cin >>secuencia_genetica;
-    
-    int num_fragmentos;
-    
-    if(secuencia_genetica.length()>=k){
-        num_fragmentos = secuencia_genetica.length() - k + 1;
-        
-        if(num_fragmentos > DIM_ARRAY_KMERS){
-            num_fragmentos = DIM_ARRAY_KMERS; 
-        } else {
-            num_fragmentos = 0;
-        }
+    for(int i = 0; i < kmers_used; i++){
+        cout << kmers[i].toString() << "<-->" << complementaryKmers[i].toString();
+        cout << endl;
     }
-    
-     cout<<num_fragmentos<<endl;
-
-    for (int i = 0; i < num_fragmentos  ; i++) {
-       }
-     
-    // Obtener el Kmer desde la secuencia genética
-    string secuencia_kmer = "";
-    for (int j = 0; j < k; j++) {
-            if (i + j < secuencia_genetica.length()) {
-                char nucleotido = secuencia_genetica[i + j];
-                if (esNucleotidoValido(nucleotido)) {
-                    secuencia_kmer += nucleotido;
-                } else {
-                // Tratar con nucleótidos no válidos (si es necesario)
-                }
-            } else {
-            // Tratar con el final de la secuencia genética (si es necesario)
-        }
-    }
-
-    // Almacenar el Kmer en el arreglo kmers
-    Kmer kmer(secuencia_kmer);
-    kmers[i] = kmer;
-
-    
-    complementaryKmers[i] = kmers[i].complementary(VALID_NUCLEOTIDES,
-        COMPLEMENTARY_NUCLEOTIDES);
-        ToLower(complementaryKmers[i]);
-    
-    cout << kmers[i].toString() <<"<-->"<< complementaryKmers[i].toString();
-    cout << endl;
-    
-        
+         
     return 0;
 }
