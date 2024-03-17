@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     // This is the array where the kmers of the input genetic sequence will be
     // saved
     Kmer kmers[DIM_ARRAY_KMERS];
-    int kmers_used=0;
+    int kmers_used=0; // Contador para el número de kmers utilizados
     
     // This is the array where the complementary kmers will be
     // saved
@@ -65,36 +65,36 @@ int main(int argc, char* argv[]) {
     int k;
     string nucleotides;
     
-    cin>>k;
-    cin>>nucleotides;
+    cin>>k; // Lee el valor de k desde la entrada estándar
+    cin>>nucleotides; // Lee la cadena de nucleótidos desde la entrada estándar
     
     // Obtain the kmers: find the kmers in the input string and put them in an array of Kmer
     
-    int lenght = nucleotides.size();
-    int pos=k;
-    while((pos>(lenght+1)) && (kmers_used<DIM_ARRAY_ACKMERS)){
-        kmers[pos-k]=nucleotides.substr(pos-k,k);
-        kmers_used++;
-        pos++;
+    int lenght = nucleotides.size();  // Obtiene la longitud de la cadena de nucleótidos
+    int pos=k;  // Inicializa la posición para buscar los kmers
+    while((pos>(lenght+1)) && (kmers_used<DIM_ARRAY_KMERS)){ // Mientras haya espacio en el arreglo y haya kmers por encontrar
+        kmers[pos-k]=nucleotides.substr(pos-k,k); // Obtiene el kmer en la posición actual y lo agrega al arreglo de kmers
+        kmers_used++; // Incrementa el contador de kmers utilizados
+        pos++;  // Incrementa la posición para buscar el próximo kmer
     }
     
     // Normalize each Kmer in the array
     
-    for(int i = 0; i < kmers_used; i++){
-        kmers[i].normalize(VALID_NUCLEOTIDES);
+    for(int i = 0; i < kmers_used; i++){ // Interacciona sobre cada kmer en el arreglo
+        kmers[i].normalize(VALID_NUCLEOTIDES); // Normaliza el kmer utilizando la lista de nucleótidos válidos
     
     // Obtain the complementary kmers and turn them into lowercase
         
-        complementaryKmers[i] = kmers[i].complementary(VALID_NUCLEOTIDES ,COMPLEMENTARY_NUCLEOTIDES);
-        ToLower(complementaryKmers[i]);
+        complementaryKmers[i] = kmers[i].complementary(VALID_NUCLEOTIDES ,COMPLEMENTARY_NUCLEOTIDES); // Obtiene el kmer complementario y lo asigna al arreglo de kmers complementarios
+        ToLower(complementaryKmers[i]); // Convierte el kmer complementario a minúsculas
     }
      
     // Show the list of kmers and complementary kmers as in the example
     
-    cout << kmers_used << endl;
+    cout << kmers_used << endl; // Muestra el número de kmers utilizados
     
-    for(int i = 0; i < kmers_used; i++){
-        cout << kmers[i].toString() << "<-->" << complementaryKmers[i].toString();
+    for(int i = 0; i < kmers_used; i++){ // Interacciona sobre cada kmer en el arreglo
+        cout << kmers[i].toString() << "<-->" << complementaryKmers[i].toString(); // Muestra el kmer y su complementario
         cout << endl;
     }
          
