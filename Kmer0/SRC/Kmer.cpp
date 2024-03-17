@@ -118,7 +118,7 @@ Kmer Kmer::complementary(const std::string& nucleotides,const std::string& compl
     }
     return(Kmer(solution)); // Devuelve un nuevo objeto Kmer con la solución
 }
-   
+ 
 // Verifica si un carácter dado es un nucleótido válido
 bool IsValidNucleotide(char nucleotide, const std::string& validNucleotides){
     bool es_valido = false; // Bandera para indicar si el carácter es válido
