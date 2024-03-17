@@ -6,7 +6,7 @@
 /** 
  * @file Kmer.cpp
  * @author Luis Pérez Velasco <luispv05@correo.ugr.es>
- * @author Andrés Cano Utrera <acu@decsai.ugr.es>
+ * @author Marwa Dris Azhir <marwadrisazhir@correo.ugr.es>
  * 
  * Created on 24 October 2023, 14:00
  */
