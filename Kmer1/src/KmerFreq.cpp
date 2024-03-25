@@ -14,3 +14,27 @@
  */
 
 #include "KmerFreq.h"
+
+Kmer::KmerFreq(){
+    
+}
+
+Kmer::getKmer(){
+    
+}
+
+int Kmer::getFrequency(){
+    
+}
+
+void Kmer::setKmer(Kmer kmer){
+    
+}
+
+void Kmer::setFrequency(int Frequency){
+    
+}
+
+std::string Kmer::toString() const{
+    return (Kmer::_text);
+}

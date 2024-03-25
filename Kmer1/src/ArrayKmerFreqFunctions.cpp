@@ -17,19 +17,61 @@
 #include "ArrayKmerFreqFunctions.h"
 
 
-void NormalizeArrayKmerFreq(KmerFreq array[], int nElements, 
-        string validNucleotides){ 
+void NormalizeArrayKmerFreq(KmerFreq array[], int nElements, std::string validNucleotides){ 
     
     // Loop to traverse and normalize each one of the kmers in array
-          // Normalize kmer i
-    
+    for(int i=0; i<nElements; i++){
+        int totalFreq = array[i].getFrequency();
+        // Normalize kmer i
+        array[i].setFrequency(totalFreq);
     
     // Loop to traverse the kmers in array from position 1 to position nElements-1
-          // index = Position of array[i].getKmer() in the subarray that begins
+        for(int j=i+1; j<nElements; j++){
+        // index = Position of array[i].getKmer() in the subarray that begins
+            int index = -1;
           //         at position 0 and ends at position i-1
-          // If array[i].getKmer() was found in the the subarray from 0 to i-1 
-               // Accumulate the frequencies of the kmers at positions 
+            for(int k=0; k<i; k++){
+                if(array[k].getKmer()==array[i].getKmer()){
+                    index = k;
+                    break;
+                }
+            }
+          // If array[i].getKmer() was found in the the subarray from 0 to i-1
+            if(index!= -1){
+               // Accumulate the frequencies of the kmers at positions
+                totalFreq += array[j].getFrequency();
                //    index and i in the kmer at position index
                // Delete from the array, the kmer at position i 
+               
+            }
+        }
+    }
 }
 
+void ReadArrayKmerFreq(KmerFreq array[], int dim, int nElements){
+    
+}
+
+void PrintArrayKmerFreq(KmerFreq array[], int nElements){
+    
+}
+
+void SwapElementsArrayKmerFreq(KmerFreq array[], int nElements, int first, int second){
+    
+}
+
+int FindKmerInArrayKmerFreq(KmerFreq array[], Kmer kmer, int initialPos, int finalPos){
+    
+}
+
+void SortArrayKmerFreq(KmerFreq array[], int nElements){
+    
+}
+
+void DeletePosArrayKmerFreq(KmerFreq array[], int nElements, int pos){
+    
+}
+
+void ZipArrayKmerFreq(KmerFreq array[], int nElements, bool deleteMissing=false, int lowerBound=0){
+    
+}
