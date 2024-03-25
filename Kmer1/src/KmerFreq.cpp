@@ -15,26 +15,28 @@
 
 #include "KmerFreq.h"
 
-Kmer::KmerFreq(){
-    
+KmerFreq::KmerFreq() : _kmer(), _frequency(0){}
+
+
+Kmer KmerFreq::getKmer(){
+    return _kmer;
 }
 
-Kmer::getKmer(){
-    
+int KmerFreq::getFrequency(){
+    return _frequency;
 }
 
-int Kmer::getFrequency(){
-    
+void KmerFreq::setKmer(Kmer kmer){
+    _kmer = kmer;
 }
 
-void Kmer::setKmer(Kmer kmer){
-    
+void KmerFreq::setFrequency(int Frequency){
+    if(frequency<0){
+        throw std::out_of_range("Frecuencia no puede ser negativa");
+    }
+    _frequency = frequency;
 }
 
-void Kmer::setFrequency(int Frequency){
-    
-}
-
-std::string Kmer::toString() const{
+std::string KmerFreq::toString() const{
     return (Kmer::_text);
 }
