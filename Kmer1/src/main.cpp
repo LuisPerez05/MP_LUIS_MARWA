@@ -57,18 +57,31 @@ int main(int argc, char* argv[]) {
     int nKmers; // Number of elements in the array kmers
 
     // Read an integer n (number of pairs to read)
+    cin >> nKmers;
     
     // Read the n pairs kmers-frequency from the standard input and put them 
     //      in the array kmers
+    for(int i=0; i<nKmers; i++){
+        string KmerText;
+        int frequency;
+        cin >> KmerText >> frequency;
+        Kmer kmer(KmerText);
+        kmers[i].setKmer(kmer);
+        kmers[i].setFrequency(frequency);
+    }
     
     // Normalizes each kmer in the array kmers
+    NormalizeArrayKmerFreq(kmers, nKmers, true);
     
     // Zip the kmers in the array kmers
+    ZipArrayKmerFreq(kmers, nKmers, true, 0);
     
     // Sort the array kmers
-    
+    SortArrayKmerFreq(kmers, nKmers);
+            
     // Print the array kmers in the standard output
-
+    PrintArrayKmerFreq(kmers, nKmers);
+            
     return 0;
 }
 

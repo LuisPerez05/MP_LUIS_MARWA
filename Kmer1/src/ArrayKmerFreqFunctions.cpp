@@ -49,29 +49,70 @@ void NormalizeArrayKmerFreq(KmerFreq array[], int nElements, std::string validNu
 }
 
 void ReadArrayKmerFreq(KmerFreq array[], int dim, int nElements){
+    if(nElements>dim){
+        nElements = dim;
+    }
+    else if(nElements < 0){
+        nElements = 0;
+    }
     
+    for(int i=0; i<nElements; i++){
+        array[i].getKmer();
+    }
 }
 
 void PrintArrayKmerFreq(KmerFreq array[], int nElements){
-    
+    std::cout<<"Número de elementos: "<< nElements <<std::endl;
+    for(int i=0; i<nElements; i++){
+        array[i].toString();
+    }
 }
 
 void SwapElementsArrayKmerFreq(KmerFreq array[], int nElements, int first, int second){
-    
+    if(first < 0 || first >=nElements || second < 0 || second >= nElements){
+        throw std::out_of_range("Index fuera del rango");
+    }
+    std::swap(array[first], array[second]);
 }
 
 int FindKmerInArrayKmerFreq(KmerFreq array[], Kmer kmer, int initialPos, int finalPos){
-    
+    for(int i=initialPos; i<=finalPos; i++){
+        if(array[i].getKmer()== kmer){
+            return i;
+        }
+    }
+    return -1;
 }
 
 void SortArrayKmerFreq(KmerFreq array[], int nElements){
-    
+    for (int i = 0; i < nElements - 1; i++) {
+        for (int j = i + 1; j < nElements; j++) {
+            if (array[i].getFrequency() < array[j].getFrequency()) {
+                std::swap(array[i], array[j]);
+            }
+        }
+    }
 }
 
 void DeletePosArrayKmerFreq(KmerFreq array[], int nElements, int pos){
-    
+    if (pos < 0 || pos >= nElements)
+        throw std::out_of_range("Index fuera de rango");
+
+    for (int i = pos; i < nElements - 1; i++) {
+        array[i] = array[i + 1];
+    }
+    nElements--;
 }
 
+
 void ZipArrayKmerFreq(KmerFreq array[], int nElements, bool deleteMissing=false, int lowerBound=0){
-    
+    for (int i = 0; i < nElements; i++) {
+        if () {
+            DeletePosArrayKmerFreq(array, nElements, i);
+            i--;
+        } else if (array[i].getFrequency() <= ) {
+            DeletePosArrayKmerFreq(array, nElements, i);
+            i--;
+        }
+    }
 }
