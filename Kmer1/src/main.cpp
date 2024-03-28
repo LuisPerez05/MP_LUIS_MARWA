@@ -5,11 +5,8 @@
 
 /**
  * @file main.cpp
- * @author Silvia Acid Carrillo <acid@decsai.ugr.es>
+ * @author Luis Pérez Velasco<luispv05@correo.ugr.es>
  * @author Andrés Cano Utrera <acu@decsai.ugr.es>
- * @author Luis Castillo Vidal <L.Castillo@decsai.ugr.es>
- * @author Javier Martínez Baena <jbaena@ugr.es>
- *
  * Created on 27 October 2023, 12:00
  */
 
@@ -57,30 +54,23 @@ int main(int argc, char* argv[]) {
     int nKmers; // Number of elements in the array kmers
 
     // Read an integer n (number of pairs to read)
-    cin >> nKmers;
+    cin>>nKmers;
     
     // Read the n pairs kmers-frequency from the standard input and put them 
     //      in the array kmers
-    for(int i=0; i<nKmers; i++){
-        string KmerText;
-        int frequency;
-        cin >> KmerText >> frequency;
-        Kmer kmer(KmerText);
-        kmers[i].setKmer(kmer);
-        kmers[i].setFrequency(frequency);
-    }
+    ReadArrayKmerFreq(kmers, DIM_ARRAY_KMERS, nKmers);
     
     // Normalizes each kmer in the array kmers
-    NormalizeArrayKmerFreq(kmers, nKmers, true);
+    NormalizeArrayKmerFreq(kmers, nKmers, VALID_NUCLEOTIDES);
     
     // Zip the kmers in the array kmers
-    ZipArrayKmerFreq(kmers, nKmers, true, 0);
+    ZipArrayKmerFreq(kmers, nKmers);
     
     // Sort the array kmers
     SortArrayKmerFreq(kmers, nKmers);
             
     // Print the array kmers in the standard output
-    PrintArrayKmerFreq(kmers, nKmers);
+     PrintArrayKmerFreq(kmers, nKmers);
             
     return 0;
 }
