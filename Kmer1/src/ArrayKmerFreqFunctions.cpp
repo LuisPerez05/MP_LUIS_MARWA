@@ -123,12 +123,20 @@ void ZipArrayKmerFreq(KmerFreq array[], int& nElements, bool deleteMissing=false
     // Bucle para iterar sobre los elementos del array
     while(i<nElements){
         // Si se desea eliminar los kmers con nucleótidos faltantes y el kmer actual contiene uno, se elimina
-        if(deleteMissing && array[i].getKmer().toString().find(Kmer::MISSING_NUCLEOTIDE) != std::string::npos){
-            DeletePosArrayKmerFreq(array, nElements, i);
+        if(deleteMissing && array[i].getKmer().toString().at()){
+            for(int j=i; j<nElements; j++){
+                if(deleteMissing = true){
+                    array[j] = array [j+1]; 
+                }
+            }
         } 
         // Si la frecuencia del kmer es menor o igual a lowerBound, se elimina
         else if (array[i].getFrequency() <= lowerBound) {
-            DeletePosArrayKmerFreq(array, nElements, i);
+            for(int j = i; j < nElements - 1; j++) {
+                array[j] = array[j+1];
+            }
+            
+            nElements--;
         } 
         // Si no se cumple ninguna condición, se pasa al siguiente kmer
         else {
