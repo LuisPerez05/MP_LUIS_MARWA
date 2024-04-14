@@ -157,7 +157,7 @@ public:
      * if the given file cannot be opened or if an error occurs while writing
      * to the file
      */
-    void save(char fileName[]) 
+    void save(char fileName[]);
 
     /**
      * @brief Loads into this object the Profile object stored in the given 
