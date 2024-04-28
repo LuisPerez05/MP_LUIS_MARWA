@@ -1,0 +1,5 @@
+%%%OUTPUT
+Distance to ../Genomes/chimpanzee_chr6_s1_l500000_k4_k5.prf: 0.143368
+Distance to ../Genomes/human_chr6_s60000_l500000_k4_k5.prf: 0.1448
+Nearest profile file: ../Genomes/chimpanzee_chr6_s1_l500000_k4_k5.prf
+Identifier of the nearest profile: pan troglodytes

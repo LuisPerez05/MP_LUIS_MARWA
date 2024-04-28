@@ -1,0 +1,1 @@
+Test #3 [tests//2.RunWithInvalidArguments_1.test] valgrind --leak-check=full  dist/Debug/GNU-Linux/mikmer3  -f ../Genomes/7pairsDNA.prf ../Genomes/7pairsDNA.prf

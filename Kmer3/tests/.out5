@@ -1,0 +1,24 @@
+==8408== Memcheck, a memory error detector
+==8408== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==8408== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==8408== Command: /home/mp/NetBeansProjects/MiKmer3/dist/Debug/GNU-Linux/mikmer3 ../Genomes/7pairsDNA.prf ../Genomes/7pairsDNA.prf
+==8408== 
+Distance to ../Genomes/7pairsDNA.prf: 0
+Nearest profile file: ../Genomes/7pairsDNA.prf
+Identifier of the nearest profile: red bug
+==8408== 
+==8408== HEAP SUMMARY:
+==8408==     in use at exit: 72,704 bytes in 1 blocks
+==8408==   total heap usage: 8 allocs, 7 frees, 254,392 bytes allocated
+==8408== 
+==8408== LEAK SUMMARY:
+==8408==    definitely lost: 0 bytes in 0 blocks
+==8408==    indirectly lost: 0 bytes in 0 blocks
+==8408==      possibly lost: 0 bytes in 0 blocks
+==8408==    still reachable: 72,704 bytes in 1 blocks
+==8408==         suppressed: 0 bytes in 0 blocks
+==8408== Reachable blocks (those to which a pointer was found) are not shown.
+==8408== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==8408== 
+==8408== For counts of detected and suppressed errors, rerun with: -v
+==8408== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

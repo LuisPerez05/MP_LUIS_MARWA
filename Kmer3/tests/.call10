@@ -1,0 +1,1 @@
+Test #10 [tests//6.human1_othersk4_k5.test] valgrind --leak-check=full  dist/Debug/GNU-Linux/mikmer3  ../Genomes/human1_k4_k5.prf ../Genomes/chimpanzee_chr6_s1_l500000_k4_k5.prf ../Genomes/human_chr6_s60000_l500000_k4_k5.prf

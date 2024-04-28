@@ -1,0 +1,1 @@
+Test #8 [tests//4.7pairsDNA_others_2.test] valgrind --leak-check=full  dist/Debug/GNU-Linux/mikmer3  -t max ../Genomes/7pairsDNA.prf ../Genomes/5pairsDNA.prf ../Genomes/6pairsDNA.prf ../Genomes/5pairsRNA.prf
