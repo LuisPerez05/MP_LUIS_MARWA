@@ -14,6 +14,9 @@
  */
 
 #include "KmerCounter.h"
+#include <cmath>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -27,71 +30,26 @@ using namespace std;
  */
 const char* const KmerCounter::DEFAULT_VALID_NUCLEOTIDES="ACGT";
 
-std::string KmerCounter::toString() const{
-    string outputString = _allNucleotides + " " + to_string(_k) + "\n";
-    
-    for(int row=0; row<this->getNumRows(); row++){
-        for(int col=0; col<this->getNumCols(); col++){
-            outputString += to_string((*this)(row,col)) + " ";
-        }
-        outputString += "\n";
-    }
-    
-    return outputString;
+KmerCounter::KmerCounter(int k, std::string validNucleotides) : _k(k), _validNucleotides(validNucleotides) {
+    _allNucleotides = std::string(1, Kmer::MISSING_NUCLEOTIDE) + _validNucleotides;
+    initFrequencies();
 }
 
-int KmerCounter::getIndex(const std::string& kmer) const{
-    int index = 0;
-    int base = 1;
-
-    for (size_t i = 0; i < kmer.size(); i++) {
-        size_t pos = _allNucleotides.find(kmer[kmer.size()-i-1]);
-        if (pos == string::npos)
-            return -1;
-        index += pos * base;
-        base *= _allNucleotides.size();
-    }
-    return index;
-}
-
-string KmerCounter::getInvertedIndex(int index, int nCharacters) const {
-    string result(nCharacters, Kmer::MISSING_NUCLEOTIDE);
-
-    for (int i = result.size(); i > 0; i--) {
-        result[i - 1] = _allNucleotides[index % _allNucleotides.size()];
-        index = index / _allNucleotides.size();
-    }
-    return result;
-}
-
-KmerCounter::KmerCounter(int k, string validNucleotides) {
-    _k = k;
-    _validNucleotides = validNucleotides;
-    _allNucleotides = Kmer::MISSING_NUCLEOTIDE + _validNucleotides;
-    _frequency = new int*[_allNucleotides.size()];
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        _frequency[i] = new int[_allNucleotides.size()];
-        for (int j = 0; j < _allNucleotides.size(); j++) {
-            _frequency[i][j] = 0;
-        }
-    }
-}
-
-KmerCounter::KmerCounter(KmerCounter orig) {
-    _k = orig._k;
-    _validNucleotides = orig._validNucleotides;
-    _allNucleotides = orig._allNucleotides;
-    _frequency = new int*[_allNucleotides.size()];
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        _frequency[i] = new int[_allNucleotides.size()];
-        for (int j = 0; j < _allNucleotides.size(); j++) {
+KmerCounter::KmerCounter(const KmerCounter& orig) : _k(orig._k), _validNucleotides(orig._validNucleotides), _allNucleotides(orig._allNucleotides) {
+    int numRows = getNumRows();
+    int numCols = getNumCols();
+    _frequency = new int*[numRows];
+    for (int i = 0; i < numRows; i++) {
+        _frequency[i] = new int[numCols];
+        for (int j = 0; j < numCols; j++) {
             _frequency[i][j] = orig._frequency[i][j];
         }
     }
 }
 
 KmerCounter::~KmerCounter() {
-    for (int i = 0; i < _allNucleotides.size(); i++) {
+    int numRows = getNumRows();
+    for (int i = 0; i < numRows; i++) {
         delete[] _frequency[i];
     }
     delete[] _frequency;
@@ -106,13 +64,15 @@ int KmerCounter::getK() {
 }
 
 int KmerCounter::getNumKmers() {
-    return pow(_allNucleotides.size(), _k);
+    return pow(getNumNucleotides(), _k);
 }
 
 int KmerCounter::getNumberActiveKmers() {
     int count = 0;
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        for (int j = 0; j < _allNucleotides.size(); j++) {
+    int numRows = getNumRows();
+    int numCols = getNumCols();
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
             if (_frequency[i][j] > 0) {
                 count++;
             }
@@ -121,37 +81,44 @@ int KmerCounter::getNumberActiveKmers() {
     return count;
 }
 
-void KmerCounter::increaseFrequency(Kmer kmer, int frequency) {
-    if (kmer.getNumNucleotides() != _k) {
-        throw invalid_argument("Invalid kmer length");
-    }
-    for (int i = 0; i < _validNucleotides.size(); i++) {
-        if (kmer.getNucleotide(i) != _validNucleotides[i] && kmer.getNucleotide(i) != Kmer::MISSING_NUCLEOTIDE) {
-            throw invalid_argument("Invalid nucleotide in kmer");
+std::string KmerCounter::toString() {
+    std::string str = _allNucleotides + " " + std::to_string(_k) + "\n";
+    int numRows = getNumRows();
+    int numCols = getNumCols();
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            str += std::to_string(_frequency[i][j]) + " ";
         }
+        str += "\n";
     }
-    int row = getIndex(kmer.getFirstHalf());
-    int col = getIndex(kmer.getSecondHalf());
-    if (row == -1 || col == -1) {
-        throw invalid_argument("Invalid kmer");
+    return str;
+}
+
+void KmerCounter::increaseFrequency(Kmer kmer, int frequency) {
+    int row, column;
+    getRowColumn(kmer, row, column);
+    if (row!= -1 && column!= -1) {
+        _frequency[row][column] += frequency;
+    } else {
+        throw std::invalid_argument("Invalid kmer");
     }
-    _frequency[row][col] += frequency;
 }
 
 KmerCounter KmerCounter::operator=(KmerCounter orig) {
-    if (this != &orig) {
-        for (int i = 0; i < _allNucleotides.size(); i++) {
+    if (this!= &orig) {
+        int numRows = getNumRows();
+        int numCols = getNumCols();
+        for (int i = 0; i < numRows; i++) {
             delete[] _frequency[i];
         }
         delete[] _frequency;
-
         _k = orig._k;
         _validNucleotides = orig._validNucleotides;
         _allNucleotides = orig._allNucleotides;
-        _frequency = new int*[_allNucleotides.size()];
-        for (int i = 0; i < _allNucleotides.size(); i++) {
-            _frequency[i] = new int[_allNucleotides.size()];
-            for (int j = 0; j < _allNucleotides.size(); j++) {
+        _frequency = new int*[numRows];
+        for (int i = 0; i < numRows; i++) {
+            _frequency[i] = new int[numCols];
+            for (int j = 0; j < numCols; j++) {
                 _frequency[i][j] = orig._frequency[i][j];
             }
         }
@@ -159,164 +126,111 @@ KmerCounter KmerCounter::operator=(KmerCounter orig) {
     return *this;
 }
 
-int KmerCounter::getFrequency(Kmer kmer) {
-    if (kmer.getNumNucleotides() != _k) {
-        throw invalid_argument("Invalid kmer length");
+KmerCounter KmerCounter::operator+=(KmerCounter kc) {
+    if (_k!= kc._k || _validNucleotides!= kc._validNucleotides) {
+        throw std::invalid_argument("Incompatible KmerCounters");
     }
-    for (int i = 0; i < _validNucleotides.size(); i++) {
-        if (kmer.getNucleotide(i) != _validNucleotides[i] && kmer.getNucleotide(i) != Kmer::MISSING_NUCLEOTIDE) {
-            throw invalid_argument("Invalid nucleotide in kmer");
-        }
-    }
-    int row = getIndex(kmer.getFirstHalf());
-    int col = getIndex(kmer.getSecondHalf());
-    if (row == -1 || col == -1) {
-        throw invalid_argument("Invalid kmer");
-    }
-    return _frequency[row][col];
-}
-
-vector<Kmer> KmerCounter::getKmers() {
-    vector<Kmer> kmers;
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        for (int j = 0; j < _allNucleotides.size(); j++) {
-            if (_frequency[i][j] > 0) {
-                string kmerStr = "";
-                kmerStr += _allNucleotides[i];
-                kmerStr += _allNucleotides[j];
-                kmers.push_back(Kmer(kmerStr));
-            }
-        }
-    }
-    return kmers;
-}
-
-int KmerCounter::getIndex(string nucleotide) {
-    int index = -1;
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        if (nucleotide == _allNucleotides[i]) {
-            index = i;
-            break;
-        }
-    }
-    return index;
-}
-
-bool KmerCounter::operator==(const KmerCounter& other) {
-    if (_k != other._k || _validNucleotides != other._validNucleotides || _allNucleotides != other._allNucleotides) {
-        return false;
-    }
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        for (int j = 0; j < _allNucleotides.size(); j++) {
-            if (_frequency[i][j] != other._frequency[i][j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-bool KmerCounter::operator!=(const KmerCounter& other) {
-    return !(*this == other);
-}
-
-KmerCounter& KmerCounter::operator+=(const KmerCounter& other) {
-    if (_k != other._k || _validNucleotides != other._validNucleotides || _allNucleotides != other._allNucleotides) {
-        throw invalid_argument("Invalid kmer counters for addition");
-    }
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        for (int j = 0; j < _allNucleotides.size(); j++) {
-            _frequency[i][j] += other._frequency[i][j];
+    int numRows = getNumRows();
+    int numCols = getNumCols();
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            _frequency[i][j] += kc._frequency[i][j];
         }
     }
     return *this;
 }
 
-KmerCounter KmerCounter::operator+(const KmerCounter& other) {
-    KmerCounter result(*this);
-    result += other;
-    return result;
-}
-
-void KmerCounter::clear() {
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        for (int j = 0;j < _allNucleotides.size(); j++) {
-            _frequency[i][j] = 0;
-        }
-    }
-}
-
 void KmerCounter::calculateFrequencies(char* fileName) {
-    clear();
-    ifstream file(fileName);
-    if (!file.is_open()) {
-        throw ios_base::failure("Could not open file");
+    initFrequencies();
+    std::ifstream file(fileName);
+    if (!file) {
+        throw std::ios_base::failure("Error opening file");
     }
-    string line;
-    string nucleotide;
-    Kmer kmer;
-    while (getline(file, line)) {
-        for (char c : line) {
-            if (c == '\t' || c == '\n') {
-                if (nucleotide.length() > 0) {
-                    kmer = Kmer(nucleotide.substr(0, _k), _validNucleotides);
-                    increaseFrequency(kmer, 1);
-                }
-                nucleotide = "";
-            } else {
-                nucleotide += toupper(c);
-            }
+    std::string line;
+    while (std::getline(file, line)) {
+        for (int i = 0; i <= line.size() - _k; i++) {
+            Kmer kmer(line.substr(i, _k));
+            increaseFrequency(kmer);
         }
     }
     file.close();
 }
 
 Profile KmerCounter::toProfile() {
-    Profile profile(_getNumberActiveKmers());
-    vector<Kmer> kmers = getKmers();
-    for (Kmer kmer : kmers) {
-        profile.append(KmerFreq(kmer, getFrequency(kmer)));
+    int kmerFrequencies;
+    int numRows = getNumRows();
+    int numCols = getNumCols();
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            if (_frequency[i][j] > 0) {
+                Kmer kmer = getKmer(i, j);
+                kmerFrequencies = _frequency[i][j];
+            }
+        }
     }
-    return profile;
+    return kmerFrequencies;
 }
 
 int KmerCounter::getNumRows() {
-    return pow(_allNucleotides.size(), _k / 2);
+    return pow(getNumNucleotides(), _k - _k / 2);
 }
 
 int KmerCounter::getNumCols() {
-    return pow(_allNucleotides.size(), _k / 2);
+    return pow(getNumNucleotides(), _k / 2);
 }
 
-void KmerCounter::getRowColumn(Kmer kmer, int& row, int& column) {
-    row = getIndex(kmer.getFirstHalf());
-    column = getIndex(kmer.getSecondHalf());
+int KmerCounter::getIndex(const std::string& kmer) const {
+    int index = 0;
+    for (char c : kmer) {
+        if (_allNucleotides.find(c) == std::string::npos) {
+            return -1;
+        }
+        index = index * _allNucleotides.size() + _allNucleotides.find(c);
+    }
+    return index;
+}
+
+std::string KmerCounter::getInvertedIndex(int index, int nCharacters) const {
+    std::string invertedIndex;
+    for (int i = 0; i < nCharacters; i++) {
+        invertedIndex += _allNucleotides[index % _allNucleotides.size()];
+        index /= _allNucleotides.size();
+    }
+    return invertedIndex;
+}
+
+void KmerCounter::getRowColumn(const Kmer& kmer, int& row, int& column) const {
+    std::string firstHalf = kmer.getSubstring(0, _k / 2);
+    std::string secondHalf = kmer.getSubstring(_k / 2, _k);
+    row = getIndex(firstHalf);
+    column = getIndex(secondHalf);
 }
 
 Kmer KmerCounter::getKmer(int row, int column) {
-    string firstHalf = getInvertedIndex(row, _k / 2);
-    string secondHalf = getInvertedIndex(column, _k / 2);
+    if (row < 0 || row >= getNumRows() || column < 0 || column >= getNumCols()) {
+        throw std::invalid_argument("Invalid row or column");
+    }
+    std::string firstHalf = getInvertedIndex(row, _k / 2);
+    std::string secondHalf = getInvertedIndex(column, _k - _k / 2);
     return Kmer(firstHalf + secondHalf);
 }
 
 void KmerCounter::initFrequencies() {
-    for (int i = 0; i < _allNucleotides.size(); i++) {
-        for (int j = 0; j < _allNucleotides.size(); j++) {
+    int numRows = getNumRows();
+    int numCols = getNumCols();
+    _frequency = new int*[numRows];
+    for (int i = 0; i < numRows; i++) {
+        _frequency[i] = new int[numCols];
+        for (int j = 0; j < numCols; j++) {
             _frequency[i][j] = 0;
         }
     }
 }
 
-int KmerCounter::operator()(int row, int column) {
-    if (row < 0 || row >= getNumRows() || column < 0 || column >= getNumCols()) {
-        throw invalid_argument("Invalid row or column");
-    }
+int KmerCounter::operator()(int row, int column) const {
     return _frequency[row][column];
 }
 
-int& KmerCounter::operator()(int row, int column) {
-    if (row < 0 || row >= getNumRows() || column < 0 || column >= getNumCols()) {
-        throw invalid_argument("Invalid row or column");
-    }
+int KmerCounter::operator()(int row, int column) {
     return _frequency[row][column];
 }

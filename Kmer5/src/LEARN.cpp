@@ -69,16 +69,40 @@ TA 1
  */
 int main(int argc, char *argv[]) {   
     // Process the main() arguments
+    if (argc < 2) {
+        cerr << "Error: Missing input file(s)" << endl;
+        showEnglishHelp(cerr);
+        return 1;
+    }
     
     // Loop to calculate the kmer frecuencies of the input genome files using 
     // a KmerCounter object
+    try {
+        counter.calculateFrequencies(argv[i]);
+    } catch(const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        continue;
+    }
     
     // Obtain a Profile object from the KmerCounter object
+    Profile inputProfile = counter.toProfile();
     
     // Zip the Profile object
+    inputProfile.zip(true);
     
     // Sort the Profile object
-    
+    inputProfile.sort();
+     
     // Save the Profile object in the output file
+    string outputFilename = "output.prf"; 
+        try {
+            inputProfile.save(outputFilename.c_str());
+            cout << "Profile saved to " << outputFilename << endl;
+        } catch(const exception& e) {
+            cerr << "Error saving profile: " << e.what() << endl;
+        }
+    }
+    
+    return 0;
 }
 

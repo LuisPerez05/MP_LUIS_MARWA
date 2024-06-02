@@ -82,7 +82,7 @@ public:
      * @param orig the KmerCounter object used as source for the copy. 
      * Input parameter
      */
-    KmerCounter(KmerCounter orig);
+    KmerCounter(const KmerCounter& orig);
 
     /**
      * @brief Destructor
@@ -277,7 +277,7 @@ private:
      * @param column The column in the frequency matrix corresponding to 
      * Kmer @p kmer. Output parameter
      */
-    void getRowColumn(Kmer kmer, int row, int column);
+    void getRowColumn(const Kmer& kmer, int& row, int& column) const;
 
     /**
      * @brief Returns the Kmer that is defined by the provided row and column 
@@ -308,7 +308,7 @@ private:
      * @param column Column of the element. Input parameter
      * @return A const reference to the element at the given position
      */
-    int operator()(int row, int column);
+    int operator()(int row, int column) const ;
 
     /**
      * @brief Overloading of the () operator to access to the element at a 

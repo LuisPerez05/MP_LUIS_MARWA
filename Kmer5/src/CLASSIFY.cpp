@@ -13,6 +13,11 @@
  * Created on 22 December 2023, 10:00
  */
 
+#include<iostream>
+#include"Profile.h"
+#include"KmerCounter.h"
+#include <fstream>
+#include <string>
 /**
  * Shows help about the use of this program in the given output stream
  * @param outputStream The output stream where the help will be shown (for example,
@@ -76,22 +81,62 @@ Final decision: homo sapiens with a distance of 0.0557804
  */
 int main(int argc, char *argv[]) {
     // Process the main() arguments
+    if (argc < 3) {
+        cerr << "Error: Missing arguments" << endl;
+        showEnglishHelp(cerr);
+        return 1;
+    }
     
     // Calculate the kmer frecuencies of the input genome file using 
     //    a KmerCounter object
-    
+    KmerCounter counter;
+    try {
+        counter.calculateFrequencies(argv[1]);
+    } catch(const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+ 
     // Obtain a Profile object for the input genome from the KmerCounter object
-    
+    Profile inputProfile = counter.toProfile();
+
     // Zip the for the input genome Profile object
+    inputProfile.zip(true);
     
     // Sort the for the input genome Profile object
+    inputProfile.sort();
     
     // Use a loop to print the distance from the input genome to 
     //   each one of the provided profile models
+    double minDistance = numeric_limits<double>::max();
+    string closestProfileId;
+
+    for (int i = 2; i < argc; ++i) {
+        
+        Profile providedProfile;
+        try {
+            providedProfile.load(argv[i]);
+        } catch(const exception& e) {
+            cerr << "Error: " << e.what() << endl;
+            continue;
+        }
+        
+        double distance = inputProfile.getDistance(providedProfile);
+
+        
+        cout << "Distance to " << providedProfile.getProfileId() << ": " << distance << endl;
+
+        
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestProfileId = providedProfile.getProfileId();
+        }
+    }
+
     
     // Print the identifier and distance to the closest profile
+    cout << endl << "Final decision: " << closestProfileId << " with a distance of " << minDistance << endl;
     
-    
- 
+    return 0;
 }
 

@@ -52,7 +52,7 @@ string Kmer::toString() const{
 
 const char& Kmer::at(int index) const{
     
-    if(index > (Kmer::_text.size() - 1)){
+    if(index>(Kmer::_text.size() - 1)){
         throw std::out_of_range("const char& Kmer::at(int index) const: index > (k-1)");
     }
     
@@ -61,7 +61,7 @@ const char& Kmer::at(int index) const{
 
 char& Kmer::at(int index){
     
-    if(index > (Kmer::_text.size() - 1)){
+    if(index>(Kmer::_text.size() - 1)){
         throw std::out_of_range("char& Kmer::at(int index): index > (k-1)");
     }
     
@@ -187,20 +187,26 @@ void ToUpper(Kmer& kmer){
     
 }
 
-void write(std::ostream outputStream){
-     outputStream << _text;
+void Kmer::write(std::ostream& outputStream) {
+     outputStream.write(_text.c_str(), sizeof(char)*(_text.size()+1));
 }
 
 void Kmer::read(std::istream& inputStream) {
-    inputStream >> _text;
+    string cadena;
+    char caracter; 
+    while(inputStream.get(caracter) && caracter != '\0'){
+        cadena += caracter;
+    }
+    
+    _text = cadena;
 }
 
 std::ostream& operator<<(std::ostream& os, const Kmer& kmer) {
-    os << kmer._text;
+    os << kmer.toString();
     return os;
 }
 
 std::istream& operator>>(std::istream& is, Kmer& kmer) {
-    is >> kmer._text;
+    kmer.read(is);
     return is;
 }

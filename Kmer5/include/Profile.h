@@ -55,7 +55,7 @@ public:
      * @param orig the Profile object used as source for the copy. Input 
      * parameter
      */
-    Profile(Profile orig);
+    Profile(const Profile& orig);
 
     /**
      * @brief Destructor
@@ -95,7 +95,7 @@ public:
      * given index is not valid
      * @return A const reference to the KmerFreq at the given position
      */
-    KmerFreq at(int index); 
+    KmerFreq at(int index) const ; 
 
     /**
      * @brief Gets a reference to the KmerFreq at the given position of the 
@@ -338,7 +338,7 @@ _G 5
      * Query method
      * @return A const reference to the KmerFreq object at position @p index
      */
-    KmerFreq operator[](int index);
+    KmerFreq operator[](int index) const ;
 
     /**
      * @brief Overloading of the [] operator for Profile class
